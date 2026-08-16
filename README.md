@@ -134,6 +134,28 @@ would take ~3.6 hours. Run `edge_test.py` cold (delete `data/edge_games.json`,
 no other fetching first) to complete it. Until then the market test rests on
 NBA/WNBA only.
 
+## Injury and news feed
+
+`news.py` pulls roster news — the one input the model has never had. Two
+zero-key sources: league RSS feeds for breaking headlines, and Jina Reader
+(`r.jina.ai`) for ESPN's full injury tables. Currently 193 NFL players listed
+across 32 teams, 71 of them out.
+
+```bash
+python news.py        # all active leagues
+python news.py nfl    # one league
+```
+
+Both techniques are adapted from Agent-Reach (MIT) — see `THIRD_PARTY.md`.
+Jina Reader also reads ESPN's public pages instead of its API, which is a way
+around the throttling that blocked the MLB/NHL edge test.
+
+**This is reporting only.** Injury news is deliberately NOT in the ratings.
+Wiring it in naively would probably make things worse, since the market prices
+these reports faster than we can read them. The measurable question is whether
+a pick moves *before* the line does — which needs line-movement data this
+project doesn't collect yet.
+
 ## Caveats
 
 - The model is **overconfident below 85%** — it says 82% and delivers 74%. Only the
