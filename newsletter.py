@@ -13,6 +13,7 @@ vibes -- see TIERS below. The 84% figure applies ONLY to the >=85% tier.
 import json, math, os, sys, datetime as dt, urllib.request
 from collections import defaultdict
 from config import DATA, OUT, ELO
+from divisions import start_rating
 
 MLB_API = ("https://statsapi.mlb.com/api/v1/schedule?sportId=1"
            "&startDate={}&endDate={}&gameType=R&hydrate=probablePitcher,team")
@@ -112,20 +113,26 @@ def football_history(today):
 
 
 def build_ratings(games):
-    elo, cnt, form = defaultdict(lambda: 1500.0), defaultdict(int), defaultdict(list)
+    elo, cnt, form = {}, defaultdict(int), defaultdict(list)
     season_of = {}
+
+    def R(lg, t):
+        if (lg, t) not in elo:
+            elo[(lg, t)] = start_rating(lg, t)
+        return elo[(lg, t)]
     for g in games:
         lg = g["lg"]; K, hfa, _ = ELO[lg]
         # season rollover (football only): regress toward the mean
         s = g.get("season")
         if s is not None and season_of.get(lg) not in (None, s):
             for key in [k for k in elo if k[0] == lg]:
-                elo[key] = 1500 + (elo[key] - 1500) * (1 - CARRY)
+                base = start_rating(lg, key[1])
+                elo[key] = base + (elo[key] - base) * (1 - CARRY)
         if s is not None:
             season_of[lg] = s
 
         adv = 0.0 if g.get("neutral") else hfa
-        rh, ra = elo[(lg, g["home"])], elo[(lg, g["away"])]
+        rh, ra = R(lg, g["home"]), R(lg, g["away"])
         p = 1 / (1 + 10 ** (-((rh + adv) - ra) / 400))
         hw = g["hs"] > g["as_"]
         d = K * math.log(abs(g["hs"] - g["as_"]) + 1) * ((1.0 if hw else 0.0) - p)
@@ -189,7 +196,7 @@ def rate(games, elo, cnt, form):
     picks = []
     for g in games:
         lg = g["lg"]; _, hfa, _ = ELO[lg]
-        rh, ra = elo[(lg, g["home"])], elo[(lg, g["away"])]
+        rh, ra = R(lg, g["home"]), R(lg, g["away"])
         if not cnt[(lg, g["home"])] or not cnt[(lg, g["away"])]:
             continue
         adv = 0.0 if g.get("neutral") else hfa

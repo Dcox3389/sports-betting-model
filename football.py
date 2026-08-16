@@ -18,6 +18,7 @@ import concurrent.futures as cf
 from collections import defaultdict
 from config import DATA, OUT
 from fetch_espn import get, split, TEAM_SPAN, WORKERS
+from divisions import start_rating
 
 BASE = "https://site.api.espn.com/apis/site/v2/sports/"
 LEAGUES = {
@@ -76,17 +77,25 @@ def fetch(lg):
 
 def run(lg, games):
     _, _, K, HFA, MINP = LEAGUES[lg]
-    elo, cnt = defaultdict(lambda: 1500.0), defaultdict(int)
+    # FCS teams open ~366 Elo below FBS -- see divisions.py. Without it, Elo
+    # never learns the tier gap and FCS teams outrank real FBS powers.
+    elo, cnt = {}, defaultdict(int)
+
+    def R(t):
+        if t not in elo:
+            elo[t] = start_rating(lg, t)
+        return elo[t]
     rows, cur_season = [], None
 
     for g in games:
         if cur_season is not None and g["season"] != cur_season:
-            for t in list(elo):                     # new season: regress to mean
-                elo[t] = 1500 + (elo[t] - 1500) * (1 - CARRY)
+            for t in list(elo):                     # new season: regress to own baseline
+                base = start_rating(lg, t)
+                elo[t] = base + (elo[t] - base) * (1 - CARRY)
         cur_season = g["season"]
 
         adv = 0.0 if g["neutral"] else HFA
-        rh, ra = elo[g["home"]], elo[g["away"]]
+        rh, ra = R(g["home"]), R(g["away"])
         p = 1 / (1 + 10 ** (-((rh + adv) - ra) / 400))
         hw = g["hs"] > g["as_"]
 

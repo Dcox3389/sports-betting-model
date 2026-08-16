@@ -156,6 +156,31 @@ these reports faster than we can read them. The measurable question is whether
 a pick moves *before* the line does — which needs line-movement data this
 project doesn't collect yet.
 
+## Football (added for the 2026 season)
+
+`football.py` grades NFL and college football out-of-sample. CFB is the
+strongest league in the project:
+
+| League | Graded | Accuracy | 85%+ tier |
+|---|---:|---:|---|
+| College football | 812 | 70.7% | **96.6%** on 87 picks (11% of slate) |
+| NFL | 284 | 64.1% | 5% of slate clears 85% |
+
+Two things football needs that no other league did:
+
+- **Season carryover** — a 17-game NFL year is too short to rebuild a rating
+  from 1500 each autumn, so ratings persist and regress 1/3 toward baseline.
+- **Division awareness** (`divisions.py`) — FBS and FCS meet in only ~14% of
+  games, so Elo never calibrates the tier gap and FCS teams outrank real FBS
+  powers. Measured across 404 cross-division games: FBS won 92.1% by an
+  average of 28.8 points, implying ~366 Elo net of home field. FCS teams now
+  start there instead of 1500. Before this, North Dakota State rated 8th
+  nationally, ahead of Georgia.
+
+NFL home-field is 35 Elo, derived from the 55.2% home win rate over the
+warm-up seasons — not tuned on the holdout. An earlier 60, borrowed from
+basketball, cost ~1.4 points of accuracy.
+
 ## Caveats
 
 - The model is **overconfident below 85%** — it says 82% and delivers 74%. Only the
