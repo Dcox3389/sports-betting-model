@@ -1,0 +1,151 @@
+<title>The Edge Report &mdash; Monday, August 17, 2026</title>
+<style>
+:root {
+  --ink:#12161C; --paper:#ECEEF1; --card:#FFFFFF; --line:#C9D0D8;
+  --mute:#5C6773; --signal:#0F8F94; --signal-deep:#0A5F63; --sand:#8C7A4F;
+  --dead:#9AA5B1;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --ink:#E6EAEF; --paper:#0E1217; --card:#161C24; --line:#2A333E;
+    --mute:#8895A4; --signal:#2BB3B8; --signal-deep:#7FD6D9; --sand:#C0A868;
+    --dead:#4A5561; }
+}
+:root[data-theme="dark"] {
+  --ink:#E6EAEF; --paper:#0E1217; --card:#161C24; --line:#2A333E;
+  --mute:#8895A4; --signal:#2BB3B8; --signal-deep:#7FD6D9; --sand:#C0A868;
+  --dead:#4A5561;
+}
+:root[data-theme="light"] {
+  --ink:#12161C; --paper:#ECEEF1; --card:#FFFFFF; --line:#C9D0D8;
+  --mute:#5C6773; --signal:#0F8F94; --signal-deep:#0A5F63; --sand:#8C7A4F;
+  --dead:#9AA5B1;
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--paper); color:var(--ink);
+  font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+.wrap { max-width:820px; margin:0 auto; padding:40px 22px 80px;
+  display:flex; flex-direction:column; gap:38px; }
+.mast { display:flex; flex-direction:column; gap:10px;
+  border-bottom:2px solid var(--ink); padding-bottom:16px; }
+h1 { font-family:Georgia,"Times New Roman",serif; font-weight:700;
+  font-size:clamp(34px,6.5vw,54px); line-height:1.02; letter-spacing:-.025em;
+  margin:0; text-wrap:balance; }
+.dateline { font-family:ui-monospace,Consolas,Menlo,monospace; font-size:12px;
+  letter-spacing:.13em; text-transform:uppercase; color:var(--mute); }
+h2 { font-family:Georgia,serif; font-size:23px; letter-spacing:-.01em;
+  margin:0 0 14px; }
+section { display:flex; flex-direction:column; }
+.strip { display:grid; grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+  gap:1px; background:var(--line); border:1px solid var(--line); }
+.strip div { background:var(--card); padding:12px 14px; }
+.strip .k { font-family:ui-monospace,Consolas,monospace; font-size:11px;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--mute); }
+.strip .v { font-family:ui-monospace,Consolas,monospace; font-size:20px;
+  font-weight:600; font-variant-numeric:tabular-nums; color:var(--signal-deep); }
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(228px,1fr)); gap:12px; }
+.card { background:var(--card); border:1px solid var(--line);
+  border-left:3px solid var(--signal); padding:15px 17px;
+  display:flex; flex-direction:column; gap:3px; }
+.card.lead { border-left-color:var(--signal-deep); }
+.cnum { font-family:ui-monospace,Consolas,monospace; font-size:31px; font-weight:600;
+  font-variant-numeric:tabular-nums; color:var(--signal-deep); line-height:1; }
+.cpick { font-weight:650; font-size:17px; }
+.cmatch { color:var(--mute); font-size:13.5px; }
+.ctier { font-family:ui-monospace,Consolas,monospace; font-size:10.5px;
+  letter-spacing:.07em; text-transform:uppercase; color:var(--mute); margin-top:5px; }
+.scroll { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:14.5px; }
+th { font-family:ui-monospace,Consolas,monospace; font-size:10.5px;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--mute);
+  text-align:left; font-weight:500; padding:0 10px 7px 0;
+  border-bottom:1px solid var(--line); white-space:nowrap; }
+td { padding:9px 10px 9px 0; border-bottom:1px solid var(--line); vertical-align:middle; }
+.mu { color:var(--mute); }
+.pk { font-weight:640; white-space:nowrap; }
+.cf { display:flex; align-items:center; gap:9px; min-width:132px; }
+.l10 { font-family:ui-monospace,Consolas,monospace; font-variant-numeric:tabular-nums;
+  color:var(--mute); font-size:13px; }
+.meter { display:block; width:72px; height:7px; background:var(--line); flex:none; }
+.fill { display:block; height:100%; background:var(--signal); }
+.fill.hot { background:var(--signal-deep); }
+.fill.dead { background:var(--dead); }
+.num { font-family:ui-monospace,Consolas,monospace; font-variant-numeric:tabular-nums;
+  font-weight:600; font-size:13.5px; }
+.num.muted { color:var(--mute); font-weight:400; }
+.dim { color:var(--mute); }
+.inj { font-family:ui-monospace,Consolas,monospace; font-variant-numeric:tabular-nums;
+  font-weight:600; cursor:help; }
+.inj.adv { color:var(--signal-deep); }
+.inj.dis { color:var(--sand); }
+.note { border-left:3px solid var(--sand); padding:2px 0 2px 16px; color:var(--ink); }
+.note b { color:var(--sand); }
+.foot { border-top:2px solid var(--ink); padding-top:16px; display:flex;
+  flex-direction:column; gap:16px; font-size:14.5px; }
+a { color:var(--signal-deep); }
+:focus-visible { outline:2px solid var(--signal); outline-offset:2px; }
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <div class="dateline">Daily model picks &middot; Issue for Monday, August 17, 2026</div>
+    <h1>The Edge Report</h1>
+    <div class="dateline">12 games rated &middot; ratings current through 2026-08-16</div>
+  </header>
+
+  <section>
+    <h2>What these numbers have actually done</h2>
+    <div class="strip">
+      <div><div class="k">Games graded</div><div class="v">18,606</div></div>
+      <div><div class="k">85%+ tier</div><div class="v">84%</div></div>
+      <div><div class="k">70%+ tier</div><div class="v">71%</div></div>
+      <div><div class="k">Every game</div><div class="v">57%</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Today's best calls</h2>
+    <div class="cards"><article class="card lead"><div class="cnum">81%</div><div class="cpick">Golden State Valkyries</div><div class="cmatch">Dallas Wings @ Golden State Valkyries</div><div class="ctier">Strong &middot; hits 71% in testing</div></article></div>
+  </section>
+
+  <section>
+    <h2>WNBA &mdash; full slate</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>Matchup</th><th>Pick</th><th>Confidence</th><th>Last 10</th><th>Out / opp</th></tr></thead>
+      <tbody><tr><td class="mu">Dallas Wings @ Golden State Valkyries</td><td class="pk">Golden State Valkyries</td><td class="cf"><span class="meter"><span class="fill hot" style="width:61.9%"></span></span><span class="num">81%</span></td><td class="l10">8-2</td><td class="l10"><span class="dim">&mdash;</span></td></tr></tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>MLB &mdash; full slate</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>Matchup</th><th>Pick</th><th>Confidence</th><th>Last 10</th><th>Out / opp</th></tr></thead>
+      <tbody><tr><td class="mu">Los Angeles Dodgers @ Colorado Rockies</td><td class="pk">Los Angeles Dodgers</td><td class="cf"><span class="meter"><span class="fill" style="width:19.9%"></span></span><span class="num">60%</span></td><td class="l10">5-5</td><td class="l10"><span class="inj dis" title="Justin Wrobleski (SP), Tyler Glasnow (SP), Dalton Rushing (C)">13<span class="dim"> / 10</span></span></td></tr>
+<tr><td class="mu">Baltimore Orioles @ Tampa Bay Rays</td><td class="pk">Tampa Bay Rays</td><td class="cf"><span class="meter"><span class="fill dead" style="width:15.6%"></span></span><span class="num muted">58%</span></td><td class="l10">7-3</td><td class="l10"><span class="inj dis" title="Shane McClanahan (SP), Cole Sulser (RP), Edwin Uceta (RP)">10<span class="dim"> / 8</span></span></td></tr>
+<tr><td class="mu">Chicago White Sox @ Chicago Cubs</td><td class="pk">Chicago Cubs</td><td class="cf"><span class="meter"><span class="fill dead" style="width:14.8%"></span></span><span class="num muted">57%</span></td><td class="l10">7-3</td><td class="l10"><span class="inj dis" title="Ben Brown (RP), Phil Maton (RP), Shelby Miller (RP)">13<span class="dim"> / 11</span></span></td></tr>
+<tr><td class="mu">Athletics @ Kansas City Royals</td><td class="pk">Kansas City Royals</td><td class="cf"><span class="meter"><span class="fill dead" style="width:14.7%"></span></span><span class="num muted">57%</span></td><td class="l10">3-7</td><td class="l10"><span class="inj " title="Beck Way (RP), Nick Mears (RP), Carlos Estevez (RP)">13<span class="dim"> / 13</span></span></td></tr>
+<tr><td class="mu">Arizona Diamondbacks @ Boston Red Sox</td><td class="pk">Boston Red Sox</td><td class="cf"><span class="meter"><span class="fill dead" style="width:14.4%"></span></span><span class="num muted">57%</span></td><td class="l10">4-6</td><td class="l10"><span class="inj " title="Justin Slaten (RP), Masataka Yoshida (DH), Isiah Kiner-Falefa (2B)">13<span class="dim"> / 13</span></span></td></tr>
+<tr><td class="mu">Miami Marlins @ Philadelphia Phillies</td><td class="pk">Philadelphia Phillies</td><td class="cf"><span class="meter"><span class="fill dead" style="width:9.0%"></span></span><span class="num muted">54%</span></td><td class="l10">5-5</td><td class="l10"><span class="inj adv" title="Tanner Banks (RP), Rafael Marchan (C), Caleb Kilian (RP)">6<span class="dim"> / 8</span></span></td></tr>
+<tr><td class="mu">Atlanta Braves @ Minnesota Twins</td><td class="pk">Atlanta Braves</td><td class="cf"><span class="meter"><span class="fill dead" style="width:8.6%"></span></span><span class="num muted">54%</span></td><td class="l10">5-5</td><td class="l10"><span class="inj adv" title="Reynaldo Lopez (RP), Robert Suarez (RP), Spencer Schwellenbach (SP)">6<span class="dim"> / 7</span></span></td></tr>
+<tr><td class="mu">Detroit Tigers @ Pittsburgh Pirates</td><td class="pk">Detroit Tigers</td><td class="cf"><span class="meter"><span class="fill dead" style="width:1.7%"></span></span><span class="num muted">51%</span></td><td class="l10">5-5</td><td class="l10"><span class="inj dis" title="James Outman (CF), Riley Greene (LF), Wenceel Perez (RF)">14<span class="dim"> / 5</span></span></td></tr>
+<tr><td class="mu">St. Louis Cardinals @ Cincinnati Reds</td><td class="pk">St. Louis Cardinals</td><td class="cf"><span class="meter"><span class="fill dead" style="width:1.0%"></span></span><span class="num muted">50%</span></td><td class="l10">6-4</td><td class="l10"><span class="inj adv" title="Ramon Urias (3B), Max Rajcic (RP)">2<span class="dim"> / 6</span></span></td></tr>
+<tr><td class="mu">St. Louis Cardinals @ Cincinnati Reds</td><td class="pk">St. Louis Cardinals</td><td class="cf"><span class="meter"><span class="fill dead" style="width:1.0%"></span></span><span class="num muted">50%</span></td><td class="l10">6-4</td><td class="l10"><span class="inj adv" title="Ramon Urias (3B), Max Rajcic (RP)">2<span class="dim"> / 6</span></span></td></tr>
+<tr><td class="mu">San Diego Padres @ New York Mets</td><td class="pk">San Diego Padres</td><td class="cf"><span class="meter"><span class="fill dead" style="width:0.3%"></span></span><span class="num muted">50%</span></td><td class="l10">7-3</td><td class="l10"><span class="inj " title="Joe Musgrove (SP), Nick Pivetta (SP), Lucas Giolito (SP)">8<span class="dim"> / 8</span></span></td></tr></tbody>
+    </table></div>
+  </section>
+
+  <footer class="foot">
+    <p class="note"><b>The grey bars are the honest part.</b> 10 of today's
+    12 games rate below 58% &mdash; close enough to a coin flip that the
+    model is not really telling you anything. Baseball lives here almost every day:
+    across 3,255 MLB games it hit 54.5%, and it has never rated one above 85%.</p>
+
+    <p class="note"><b>This is not betting advice.</b> Graded against real closing
+    moneylines, these picks lose about 5.5% per bet. The market prices them at least
+    as well as the model does. Predicting winners and beating prices are different
+    skills, and this only has the first one.</p>
+
+    <p style="color:var(--mute);font-size:13.5px">Ratings are Elo, updated only after
+    a game is played, so nothing here has seen its own result. Confidence bars show
+    edge over a coin flip: an empty bar is 50%, a full bar is 100%.</p>
+  </footer>
+</div>

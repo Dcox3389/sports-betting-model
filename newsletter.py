@@ -64,16 +64,69 @@ def load_history(today):
                               hs=int(h["score"]), as_=int(a["score"])))
         except Exception:
             continue
+    games.extend(football_history(today))
     games.sort(key=lambda x: x["date"])
+    return games
+
+
+FOOTBALL = ("nfl", "cfb")
+FB_PATH = {"nfl": "football/nfl", "cfb": "football/college-football"}
+CARRY = 1 / 3.0     # football ratings regress this far to the mean each new season
+
+
+def football_history(today):
+    """Prior seasons from football.py's cache, plus anything already played
+    this season. Football needs the carryover: a 17-game NFL year is far too
+    short to rebuild a rating from 1500 every autumn."""
+    games = []
+    for lg in FOOTBALL:
+        p = os.path.join(DATA, f"{lg}_games.json")
+        if os.path.exists(p):
+            for g in json.load(open(p)):
+                g = dict(g); g["lg"] = lg
+                games.append(g)
+        # current season to date (empty until kickoff, cheap either way)
+        url = (f"https://site.api.espn.com/apis/site/v2/sports/{FB_PATH[lg]}"
+               f"/scoreboard?dates=20260801-{today.replace('-', '')}&limit=1000")
+        for ev in (get(url) or {}).get("events", []):
+            if (ev.get("season") or {}).get("type") not in (2, 3):
+                continue                      # preseason is noise
+            try:
+                c = ev["competitions"][0]
+                if not c["status"]["type"].get("completed"):
+                    continue
+                cs = c["competitors"]
+                h = next(x for x in cs if x["homeAway"] == "home")
+                a = next(x for x in cs if x["homeAway"] == "away")
+                if int(h["score"]) == int(a["score"]):
+                    continue
+                games.append(dict(lg=lg, date=ev["date"][:10],
+                                  season=(ev.get("season") or {}).get("year"),
+                                  home=h["team"]["displayName"],
+                                  away=a["team"]["displayName"],
+                                  hs=int(h["score"]), as_=int(a["score"]),
+                                  neutral=bool(c.get("neutralSite"))))
+            except Exception:
+                continue
     return games
 
 
 def build_ratings(games):
     elo, cnt, form = defaultdict(lambda: 1500.0), defaultdict(int), defaultdict(list)
+    season_of = {}
     for g in games:
         lg = g["lg"]; K, hfa, _ = ELO[lg]
+        # season rollover (football only): regress toward the mean
+        s = g.get("season")
+        if s is not None and season_of.get(lg) not in (None, s):
+            for key in [k for k in elo if k[0] == lg]:
+                elo[key] = 1500 + (elo[key] - 1500) * (1 - CARRY)
+        if s is not None:
+            season_of[lg] = s
+
+        adv = 0.0 if g.get("neutral") else hfa
         rh, ra = elo[(lg, g["home"])], elo[(lg, g["away"])]
-        p = 1 / (1 + 10 ** (-((rh + hfa) - ra) / 400))
+        p = 1 / (1 + 10 ** (-((rh + adv) - ra) / 400))
         hw = g["hs"] > g["as_"]
         d = K * math.log(abs(g["hs"] - g["as_"]) + 1) * ((1.0 if hw else 0.0) - p)
         elo[(lg, g["home"])] += d; elo[(lg, g["away"])] -= d
@@ -96,6 +149,25 @@ def slate(target):
             out.append(dict(lg="mlb", home=h["team"]["name"], away=a["team"]["name"],
                             time=g["gameDate"], hp=hp, ap=ap))
     tgt = target.replace("-", "")
+    for lg in FOOTBALL:
+        url = (f"https://site.api.espn.com/apis/site/v2/sports/{FB_PATH[lg]}"
+               f"/scoreboard?dates={tgt}&limit=300")
+        for ev in (get(url) or {}).get("events", []):
+            if (ev.get("season") or {}).get("type") not in (2, 3):
+                continue
+            try:
+                c = ev["competitions"][0]
+                if c["status"]["type"].get("completed"):
+                    continue
+                cs = c["competitors"]
+                h = next(x for x in cs if x["homeAway"] == "home")
+                a = next(x for x in cs if x["homeAway"] == "away")
+                out.append(dict(lg=lg, home=h["team"]["displayName"],
+                                away=a["team"]["displayName"], time=ev["date"],
+                                hp=None, ap=None,
+                                neutral=bool(c.get("neutralSite"))))
+            except Exception:
+                continue
     w = get(ESPN.format(tgt, tgt))
     for ev in (w or {}).get("events", []):
         try:
@@ -120,10 +192,13 @@ def rate(games, elo, cnt, form):
         rh, ra = elo[(lg, g["home"])], elo[(lg, g["away"])]
         if not cnt[(lg, g["home"])] or not cnt[(lg, g["away"])]:
             continue
-        p = 1 / (1 + 10 ** (-((rh + hfa) - ra) / 400))
+        adv = 0.0 if g.get("neutral") else hfa
+        p = 1 / (1 + 10 ** (-((rh + adv) - ra) / 400))
         pick, conf = (g["home"], p) if p >= .5 else (g["away"], 1 - p)
+        opp = g["away"] if pick == g["home"] else g["home"]
         f = form[(lg, pick)][-10:]
         picks.append(dict(lg=lg, matchup=f"{g['away']} @ {g['home']}", pick=pick,
+                          opponent=opp,
                           conf=conf, home=g["home"], away=g["away"],
                           elo_h=rh, elo_a=ra, time=g["time"],
                           hp=g["hp"], ap=g["ap"],
@@ -163,16 +238,20 @@ def render(picks, target, asof):
         L.append("Every game on the board rates under 60%. That is a real signal, "
                  "not a missing one — see the note at the bottom.")
         L.append("")
-    for lg, label in (("wnba", "WNBA"), ("mlb", "MLB")):
+    for lg, label in (("cfb", "College Football"), ("nfl", "NFL"),
+                      ("wnba", "WNBA"), ("mlb", "MLB")):
         sub = [p for p in picks if p["lg"] == lg]
         if not sub:
             continue
         L.append(f"## {label} — full slate")
         L.append("")
-        L.append("| Matchup | Pick | Conf | Pick's last 10 |")
-        L.append("|---|---|---|---|")
+        L.append("| Matchup | Pick | Conf | Last 10 | Absences |")
+        L.append("|---|---|---|---|---|")
         for p in sub:
-            L.append(f"| {p['matchup']} | {p['pick']} | {p['conf']:.0%} | {p['last10']} |")
+            op, oo = p.get("out_pick"), p.get("out_opp")
+            inj = "—" if op is None else f"{op} out / {oo} opp"
+            L.append(f"| {p['matchup']} | {p['pick']} | {p['conf']:.0%} "
+                     f"| {p['last10']} | {inj} |")
         L.append("")
     L.append("## How to read this")
     L.append("")
@@ -218,16 +297,25 @@ def render_html(picks, target, asof):
     top = [p for p in picks if p["conf"] >= 0.60][:6]
     wn = [p for p in picks if p["lg"] == "wnba"]
     mb = [p for p in picks if p["lg"] == "mlb"]
+    fb = [p for p in picks if p["lg"] in ("nfl", "cfb")]
     noise = sum(1 for p in picks if p["conf"] < DEAD_BAND)
 
     def rows(sub):
         out = []
         for p in sub:
+            op, oo = p.get("out_pick"), p.get("out_opp")
+            if op is None:
+                inj = '<span class="dim">&mdash;</span>'
+            else:
+                edge = "adv" if oo > op else ("dis" if op > oo else "")
+                inj = (f'<span class="inj {edge}" title="{esc(p.get("key_out") or "none")}">'
+                       f'{op}<span class="dim"> / {oo}</span></span>')
             out.append(
                 f'<tr><td class="mu">{esc(p["matchup"])}</td>'
                 f'<td class="pk">{esc(p["pick"])}</td>'
                 f'<td class="cf">{bar(p["conf"])}</td>'
-                f'<td class="l10">{esc(p["last10"])}</td></tr>')
+                f'<td class="l10">{esc(p["last10"])}</td>'
+                f'<td class="l10">{inj}</td></tr>')
         return "\n".join(out)
 
     cards = "\n".join(
@@ -312,6 +400,11 @@ td {{ padding:9px 10px 9px 0; border-bottom:1px solid var(--line); vertical-alig
 .num {{ font-family:ui-monospace,Consolas,monospace; font-variant-numeric:tabular-nums;
   font-weight:600; font-size:13.5px; }}
 .num.muted {{ color:var(--mute); font-weight:400; }}
+.dim {{ color:var(--mute); }}
+.inj {{ font-family:ui-monospace,Consolas,monospace; font-variant-numeric:tabular-nums;
+  font-weight:600; cursor:help; }}
+.inj.adv {{ color:var(--signal-deep); }}
+.inj.dis {{ color:var(--sand); }}
 .note {{ border-left:3px solid var(--sand); padding:2px 0 2px 16px; color:var(--ink); }}
 .note b {{ color:var(--sand); }}
 .foot {{ border-top:2px solid var(--ink); padding-top:16px; display:flex;
@@ -345,7 +438,7 @@ a {{ color:var(--signal-deep); }}
   <section>
     <h2>WNBA &mdash; full slate</h2>
     <div class="scroll"><table>
-      <thead><tr><th>Matchup</th><th>Pick</th><th>Confidence</th><th>Last 10</th></tr></thead>
+      <thead><tr><th>Matchup</th><th>Pick</th><th>Confidence</th><th>Last 10</th><th>Out / opp</th></tr></thead>
       <tbody>{rows(wn)}</tbody>
     </table></div>
   </section>
@@ -353,7 +446,7 @@ a {{ color:var(--signal-deep); }}
   <section>
     <h2>MLB &mdash; full slate</h2>
     <div class="scroll"><table>
-      <thead><tr><th>Matchup</th><th>Pick</th><th>Confidence</th><th>Last 10</th></tr></thead>
+      <thead><tr><th>Matchup</th><th>Pick</th><th>Confidence</th><th>Last 10</th><th>Out / opp</th></tr></thead>
       <tbody>{rows(mb)}</tbody>
     </table></div>
   </section>
@@ -387,14 +480,25 @@ def main():
     print(f"  slate: {len(games)} games")
     picks = rate(games, elo, cnt, form)
     print(f"  rated: {len(picks)}")
+    try:
+        import news
+        news.annotate(picks)
+        print(f"  injury context attached for "
+              f"{sum(1 for p in picks if p.get('out_pick') or p.get('out_opp'))} picks")
+    except Exception as e:
+        print(f"  (injury feed unavailable: {type(e).__name__})")
     md = render(picks, target, hist[-1]["date"] if hist else "n/a")
     asof = hist[-1]["date"] if hist else "n/a"
     path = os.path.join(OUT, f"newsletter_{target}.md")
     open(path, "w", encoding="utf-8").write(md)
     hpath = os.path.join(OUT, f"newsletter_{target}.html")
     open(hpath, "w", encoding="utf-8").write(render_html(picks, target, asof))
+    # stable filename so the published issue keeps one URL across days
+    latest = os.path.join(OUT, "newsletter_latest.html")
+    open(latest, "w", encoding="utf-8").write(render_html(picks, target, asof))
     print(f"wrote {path}")
     print(f"wrote {hpath}")
+    print(f"wrote {latest}  (stable URL target)")
     print("\n" + "=" * 60)
     print(md[:1800])
 
