@@ -61,6 +61,8 @@ ELO = {
     "nba":  (20.0, 100.0, 20),
     "nhl":  (6.0,  50.0, 20),
     "wnba": (20.0, 100.0, 10),
+    "nfl":  (20.0, 35.0, 8),     # see football.py for how 35 was derived
+    "cfb":  (26.0, 60.0, 8),
     "tennis_m": (0.0, 0.0, 10),   # K is dynamic, see screen.py
     "tennis_w": (0.0, 0.0, 10),
 }
