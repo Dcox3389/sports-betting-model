@@ -1,0 +1,287 @@
+<title>The Edge Report &mdash; Archive</title>
+<style>
+:root {
+  --ink:#12161C; --paper:#ECEEF1; --card:#FFFFFF; --line:#C9D0D8; --mute:#5C6773;
+  --signal:#0F8F94; --signal-deep:#0A5F63; --sand:#8C7A4F; --down:#B4423F; --grid:#DFE4E9;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --ink:#E6EAEF; --paper:#0E1217; --card:#161C24; --line:#2A333E; --mute:#8895A4;
+    --signal:#2BB3B8; --signal-deep:#7FD6D9; --sand:#C0A868; --down:#E07572; --grid:#232C36; }
+}
+:root[data-theme="dark"] {
+  --ink:#E6EAEF; --paper:#0E1217; --card:#161C24; --line:#2A333E; --mute:#8895A4;
+  --signal:#2BB3B8; --signal-deep:#7FD6D9; --sand:#C0A868; --down:#E07572; --grid:#232C36;
+}
+:root[data-theme="light"] {
+  --ink:#12161C; --paper:#ECEEF1; --card:#FFFFFF; --line:#C9D0D8; --mute:#5C6773;
+  --signal:#0F8F94; --signal-deep:#0A5F63; --sand:#8C7A4F; --down:#B4423F; --grid:#DFE4E9;
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--paper); color:var(--ink);
+  font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+.wrap { max-width:860px; margin:0 auto; padding:40px 22px 80px;
+  display:flex; flex-direction:column; gap:36px; }
+.mast { border-bottom:2px solid var(--ink); padding-bottom:16px;
+  display:flex; flex-direction:column; gap:9px; }
+h1 { font-family:Georgia,"Times New Roman",serif; font-size:clamp(32px,6vw,50px);
+  line-height:1.03; letter-spacing:-.025em; margin:0; text-wrap:balance; }
+.dateline { font-family:ui-monospace,Consolas,Menlo,monospace; font-size:12px;
+  letter-spacing:.13em; text-transform:uppercase; color:var(--mute); }
+h2 { font-family:Georgia,serif; font-size:22px; margin:0 0 5px; letter-spacing:-.01em; }
+.sub { color:var(--mute); font-size:14.5px; margin:0 0 16px; max-width:64ch; }
+section { display:flex; flex-direction:column; }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:1px; background:var(--line); border:1px solid var(--line); }
+.tiles div { background:var(--card); padding:13px 15px; }
+.tiles .k { font-family:ui-monospace,Consolas,monospace; font-size:10.5px;
+  letter-spacing:.11em; text-transform:uppercase; color:var(--mute); }
+.tiles .v { font-family:ui-monospace,Consolas,monospace; font-size:25px; font-weight:600;
+  font-variant-numeric:tabular-nums; color:var(--signal-deep); line-height:1.25; }
+.tiles .s { font-size:12.5px; color:var(--mute); }
+figure { margin:0; background:var(--card); border:1px solid var(--line); padding:16px 18px 10px; }
+svg { display:block; width:100%; height:auto; }
+.dot { fill:var(--signal); }
+.tick { stroke:var(--ink); stroke-width:2.5; }
+.connect { stroke:var(--mute); stroke-width:1.5; stroke-dasharray:2 3; }
+.axis { stroke:var(--grid); stroke-width:1; }
+.ax { fill:var(--mute); font-size:10.5px; font-family:ui-monospace,Consolas,monospace; }
+.lbl-l { fill:var(--ink); font-size:13px; font-weight:640; }
+.lbl-n { fill:var(--mute); font-size:11px; font-family:ui-monospace,Consolas,monospace; }
+.val { fill:var(--ink); font-size:12.5px; font-weight:650;
+  font-family:ui-monospace,Consolas,monospace; }
+.legend { display:flex; gap:20px; align-items:center; padding:8px 0 2px;
+  font-size:12.5px; color:var(--mute); flex-wrap:wrap; }
+.legend span { display:inline-flex; align-items:center; gap:7px; }
+.sw-dot { width:12px; height:12px; border-radius:50%; background:var(--signal); }
+.sw-tick { width:3px; height:14px; background:var(--ink); }
+.dev { fill:var(--signal); }
+.dev.down { fill:var(--down); }
+.dev:hover { opacity:.65; }
+.base { stroke:var(--ink); stroke-width:1.5; }
+table { width:100%; border-collapse:collapse; font-size:14.5px; }
+th { font-family:ui-monospace,Consolas,monospace; font-size:10.5px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--mute); text-align:left; font-weight:500;
+  padding:0 10px 7px 0; border-bottom:1px solid var(--line); }
+td { padding:8px 10px 8px 0; border-bottom:1px solid var(--line); }
+.d, .rec, .pc { font-family:ui-monospace,Consolas,monospace;
+  font-variant-numeric:tabular-nums; }
+.pc { font-weight:650; } .pc.good { color:var(--signal-deep); } .pc.bad { color:var(--down); }
+.scroll { overflow-x:auto; }
+.note { border-left:3px solid var(--sand); padding:2px 0 2px 16px; }
+.note b { color:var(--sand); }
+.foot { border-top:2px solid var(--ink); padding-top:16px; display:flex;
+  flex-direction:column; gap:15px; font-size:14.5px; }
+:focus-visible { outline:2px solid var(--signal); outline-offset:2px; }
+@media (prefers-reduced-motion:reduce) { * { transition:none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <div class="dateline">The Edge Report &middot; Performance archive</div>
+    <h1>Every pick we've published</h1>
+    <div class="dateline">74 issues &middot; 1,111 graded picks &middot;
+      through 2026-08-13</div>
+  </header>
+
+  <section>
+    <div class="tiles">
+      <div><div class="k">Issues</div><div class="v">74</div></div>
+      <div><div class="k">Picks graded</div><div class="v">1,111</div></div>
+      <div><div class="k">Overall</div><div class="v">57.7%</div></div>
+      <div><div class="k">Best issue</div><div class="v">80%</div>
+        <div class="s">2026-06-15 &middot; 8/10</div></div>
+      <div><div class="k">Worst issue</div><div class="v">22%</div>
+        <div class="s">2026-06-01 &middot; 2/9</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Do the tier labels hold up?</h2>
+    <p class="sub">Every issue prints a confidence tier. This is what each tier
+      promised against what it actually delivered, graded one day at a time.</p>
+    <figure>
+      <svg viewBox="0 0 800 224" role="img"
+           aria-label="Delivered versus claimed hit rate by confidence tier">
+        <line class="axis" x1="198.2" y1="10" x2="198.2" y2="198"/>
+<text class="ax" x="198.2" y="214" text-anchor="middle">50%</text>
+<line class="axis" x1="330.7" y1="10" x2="330.7" y2="198"/>
+<text class="ax" x="330.7" y="214" text-anchor="middle">60%</text>
+<line class="axis" x1="463.1" y1="10" x2="463.1" y2="198"/>
+<text class="ax" x="463.1" y="214" text-anchor="middle">70%</text>
+<line class="axis" x1="595.6" y1="10" x2="595.6" y2="198"/>
+<text class="ax" x="595.6" y="214" text-anchor="middle">80%</text>
+<line class="axis" x1="728.0" y1="10" x2="728.0" y2="198"/>
+<text class="ax" x="728.0" y="214" text-anchor="middle">90%</text>
+<line class="connect" x1="648.5" y1="30" x2="656.7" y2="30"/>
+<line class="tick" x1="648.5" y1="20" x2="648.5" y2="40"><title>Headline: claimed 84%</title></line>
+<circle class="dot" cx="656.7" cy="30" r="6.5"><title>Headline: delivered 85% on 26 picks</title></circle>
+<text class="lbl-l" x="0" y="27">Headline</text>
+<text class="lbl-n" x="0" y="44">26 picks</text>
+<text class="val" x="669.7" y="34" text-anchor="start">85%</text>
+<line class="connect" x1="476.4" y1="76" x2="511.9" y2="76"/>
+<line class="tick" x1="476.4" y1="66" x2="476.4" y2="86"><title>Strong: claimed 71%</title></line>
+<circle class="dot" cx="511.9" cy="76" r="6.5"><title>Strong: delivered 74% on 57 picks</title></circle>
+<text class="lbl-l" x="0" y="73">Strong</text>
+<text class="lbl-n" x="0" y="90">57 picks</text>
+<text class="val" x="524.9" y="80" text-anchor="start">74%</text>
+<line class="connect" x1="348.0" y1="122" x2="383.6" y2="122"/>
+<line class="tick" x1="383.6" y1="112" x2="383.6" y2="132"><title>Lean: claimed 64%</title></line>
+<circle class="dot" cx="348.0" cy="122" r="6.5"><title>Lean: delivered 61% on 168 picks</title></circle>
+<text class="lbl-l" x="0" y="119">Lean</text>
+<text class="lbl-n" x="0" y="136">168 picks</text>
+<text class="val" x="335.0" y="126" text-anchor="end">61%</text>
+<line class="connect" x1="266.0" y1="168" x2="290.9" y2="168"/>
+<line class="tick" x1="290.9" y1="158" x2="290.9" y2="178"><title>Coin-flip: claimed 57%</title></line>
+<circle class="dot" cx="266.0" cy="168" r="6.5"><title>Coin-flip: delivered 55% on 860 picks</title></circle>
+<text class="lbl-l" x="0" y="165">Coin-flip</text>
+<text class="lbl-n" x="0" y="182">860 picks</text>
+<text class="val" x="253.0" y="172" text-anchor="end">55%</text>
+      </svg>
+      <div class="legend">
+        <span><span class="sw-dot"></span>Delivered</span>
+        <span><span class="sw-tick"></span>Claimed on the tier label</span>
+      </div>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Issue by issue</h2>
+    <p class="sub">Each bar is one issue, measured against a coin flip. Above the
+      line beat 50%, below it didn't. The spread is the point &mdash; single days
+      are noisy even when the aggregate is stable.</p>
+    <figure>
+      <svg viewBox="0 0 800 170" role="img"
+           aria-label="Per-issue hit rate relative to 50 percent">
+        <line class="axis" x1="40" y1="40.5" x2="760" y2="40.5"/>
+<text class="ax" x="32" y="44.5" text-anchor="end">75%</text>
+<line class="axis" x1="40" y1="115.5" x2="760" y2="115.5"/>
+<text class="ax" x="32" y="119.5" text-anchor="end">25%</text>
+<rect class="dev down" x="40.0" y="78.0" width="6.4" height="41.7" rx="1"><title>2026-06-01 &mdash; 2/9 (22%)</title></rect>
+<rect class="dev down" x="49.7" y="78.0" width="6.4" height="5.0" rx="1"><title>2026-06-02 &mdash; 7/15 (47%)</title></rect>
+<rect class="dev down" x="59.5" y="78.0" width="6.4" height="9.4" rx="1"><title>2026-06-03 &mdash; 7/16 (44%)</title></rect>
+<rect class="dev down" x="69.2" y="78.0" width="6.4" height="15.0" rx="1"><title>2026-06-04 &mdash; 4/10 (40%)</title></rect>
+<rect class="dev up" x="78.9" y="73.0" width="6.4" height="5.0" rx="1"><title>2026-06-05 &mdash; 8/15 (53%)</title></rect>
+<rect class="dev up" x="88.6" y="53.0" width="6.4" height="25.0" rx="1"><title>2026-06-06 &mdash; 12/18 (67%)</title></rect>
+<rect class="dev up" x="98.4" y="61.3" width="6.4" height="16.7" rx="1"><title>2026-06-07 &mdash; 11/18 (61%)</title></rect>
+<rect class="dev up" x="108.1" y="63.0" width="6.4" height="15.0" rx="1"><title>2026-06-08 &mdash; 6/10 (60%)</title></rect>
+<rect class="dev up" x="117.8" y="55.9" width="6.4" height="22.1" rx="1"><title>2026-06-09 &mdash; 11/17 (65%)</title></rect>
+<rect class="dev up" x="127.6" y="78.0" width="6.4" height="1.2" rx="1"><title>2026-06-10 &mdash; 9/18 (50%)</title></rect>
+<rect class="dev up" x="137.3" y="48.0" width="6.4" height="30.0" rx="1"><title>2026-06-11 &mdash; 7/10 (70%)</title></rect>
+<rect class="dev up" x="147.0" y="78.0" width="6.4" height="1.2" rx="1"><title>2026-06-12 &mdash; 9/18 (50%)</title></rect>
+<rect class="dev up" x="156.8" y="38.3" width="6.4" height="39.7" rx="1"><title>2026-06-13 &mdash; 13/17 (76%)</title></rect>
+<rect class="dev down" x="166.5" y="78.0" width="6.4" height="19.7" rx="1"><title>2026-06-14 &mdash; 7/19 (37%)</title></rect>
+<rect class="dev up" x="176.2" y="33.0" width="6.4" height="45.0" rx="1"><title>2026-06-15 &mdash; 8/10 (80%)</title></rect>
+<rect class="dev up" x="185.9" y="55.5" width="6.4" height="22.5" rx="1"><title>2026-06-16 &mdash; 13/20 (65%)</title></rect>
+<rect class="dev down" x="195.7" y="78.0" width="6.4" height="5.0" rx="1"><title>2026-06-17 &mdash; 7/15 (47%)</title></rect>
+<rect class="dev up" x="205.4" y="78.0" width="6.4" height="1.2" rx="1"><title>2026-06-18 &mdash; 7/14 (50%)</title></rect>
+<rect class="dev up" x="215.1" y="59.2" width="6.4" height="18.8" rx="1"><title>2026-06-19 &mdash; 10/16 (62%)</title></rect>
+<rect class="dev down" x="224.9" y="78.0" width="6.4" height="22.1" rx="1"><title>2026-06-20 &mdash; 6/17 (35%)</title></rect>
+<rect class="dev up" x="234.6" y="64.8" width="6.4" height="13.2" rx="1"><title>2026-06-21 &mdash; 10/17 (59%)</title></rect>
+<rect class="dev down" x="244.3" y="78.0" width="6.4" height="5.0" rx="1"><title>2026-06-22 &mdash; 7/15 (47%)</title></rect>
+<rect class="dev up" x="254.1" y="64.8" width="6.4" height="13.2" rx="1"><title>2026-06-23 &mdash; 10/17 (59%)</title></rect>
+<rect class="dev up" x="263.8" y="66.2" width="6.4" height="11.8" rx="1"><title>2026-06-24 &mdash; 11/19 (58%)</title></rect>
+<rect class="dev up" x="273.5" y="71.2" width="6.4" height="6.8" rx="1"><title>2026-06-25 &mdash; 6/11 (55%)</title></rect>
+<rect class="dev up" x="283.2" y="74.1" width="6.4" height="3.9" rx="1"><title>2026-06-26 &mdash; 10/19 (53%)</title></rect>
+<rect class="dev down" x="293.0" y="78.0" width="6.4" height="22.1" rx="1"><title>2026-06-27 &mdash; 6/17 (35%)</title></rect>
+<rect class="dev up" x="302.7" y="60.1" width="6.4" height="17.9" rx="1"><title>2026-06-28 &mdash; 13/21 (62%)</title></rect>
+<rect class="dev up" x="312.4" y="60.7" width="6.4" height="17.3" rx="1"><title>2026-06-29 &mdash; 8/13 (62%)</title></rect>
+<rect class="dev up" x="322.2" y="49.9" width="6.4" height="28.1" rx="1"><title>2026-06-30 &mdash; 11/16 (69%)</title></rect>
+<rect class="dev up" x="331.9" y="78.0" width="6.4" height="1.2" rx="1"><title>2026-07-01 &mdash; 7/14 (50%)</title></rect>
+<rect class="dev up" x="341.6" y="63.0" width="6.4" height="15.0" rx="1"><title>2026-07-02 &mdash; 6/10 (60%)</title></rect>
+<rect class="dev up" x="351.4" y="49.9" width="6.4" height="28.1" rx="1"><title>2026-07-03 &mdash; 11/16 (69%)</title></rect>
+<rect class="dev down" x="361.1" y="78.0" width="6.4" height="22.1" rx="1"><title>2026-07-04 &mdash; 6/17 (35%)</title></rect>
+<rect class="dev down" x="370.8" y="78.0" width="6.4" height="8.3" rx="1"><title>2026-07-05 &mdash; 8/18 (44%)</title></rect>
+<rect class="dev up" x="380.5" y="69.7" width="6.4" height="8.3" rx="1"><title>2026-07-06 &mdash; 5/9 (56%)</title></rect>
+<rect class="dev up" x="390.3" y="61.3" width="6.4" height="16.7" rx="1"><title>2026-07-07 &mdash; 11/18 (61%)</title></rect>
+<rect class="dev up" x="400.0" y="66.2" width="6.4" height="11.8" rx="1"><title>2026-07-08 &mdash; 11/19 (58%)</title></rect>
+<rect class="dev up" x="409.7" y="78.0" width="6.4" height="1.2" rx="1"><title>2026-07-09 &mdash; 7/14 (50%)</title></rect>
+<rect class="dev up" x="419.5" y="66.2" width="6.4" height="11.8" rx="1"><title>2026-07-10 &mdash; 11/19 (58%)</title></rect>
+<rect class="dev up" x="429.2" y="63.0" width="6.4" height="15.0" rx="1"><title>2026-07-11 &mdash; 12/20 (60%)</title></rect>
+<rect class="dev up" x="438.9" y="61.3" width="6.4" height="16.7" rx="1"><title>2026-07-12 &mdash; 11/18 (61%)</title></rect>
+<rect class="dev up" x="448.6" y="78.0" width="6.4" height="1.2" rx="1"><title>2026-07-13 &mdash; 1/2 (50%)</title></rect>
+<rect class="dev up" x="458.4" y="53.0" width="6.4" height="25.0" rx="1"><title>2026-07-14 &mdash; 2/3 (67%)</title></rect>
+<rect class="dev up" x="468.1" y="3.0" width="6.4" height="75.0" rx="1"><title>2026-07-15 &mdash; 2/2 (100%)</title></rect>
+<rect class="dev down" x="477.8" y="78.0" width="6.4" height="75.0" rx="1"><title>2026-07-16 &mdash; 0/3 (0%)</title></rect>
+<rect class="dev up" x="487.6" y="55.9" width="6.4" height="22.1" rx="1"><title>2026-07-17 &mdash; 11/17 (65%)</title></rect>
+<rect class="dev up" x="497.3" y="68.6" width="6.4" height="9.4" rx="1"><title>2026-07-18 &mdash; 9/16 (56%)</title></rect>
+<rect class="dev up" x="507.0" y="50.7" width="6.4" height="27.3" rx="1"><title>2026-07-19 &mdash; 15/22 (68%)</title></rect>
+<rect class="dev up" x="516.8" y="53.0" width="6.4" height="25.0" rx="1"><title>2026-07-20 &mdash; 10/15 (67%)</title></rect>
+<rect class="dev down" x="526.5" y="78.0" width="6.4" height="4.4" rx="1"><title>2026-07-21 &mdash; 8/17 (47%)</title></rect>
+<rect class="dev up" x="536.2" y="53.0" width="6.4" height="25.0" rx="1"><title>2026-07-22 &mdash; 14/21 (67%)</title></rect>
+<rect class="dev up" x="545.9" y="67.3" width="6.4" height="10.7" rx="1"><title>2026-07-23 &mdash; 4/7 (57%)</title></rect>
+<rect class="dev down" x="555.7" y="78.0" width="6.4" height="5.0" rx="1"><title>2026-07-24 &mdash; 7/15 (47%)</title></rect>
+<rect class="dev up" x="565.4" y="73.0" width="6.4" height="5.0" rx="1"><title>2026-07-25 &mdash; 8/15 (53%)</title></rect>
+<rect class="dev up" x="575.1" y="73.0" width="6.4" height="5.0" rx="1"><title>2026-07-26 &mdash; 8/15 (53%)</title></rect>
+<rect class="dev up" x="584.9" y="71.2" width="6.4" height="6.8" rx="1"><title>2026-07-27 &mdash; 6/11 (55%)</title></rect>
+<rect class="dev up" x="594.6" y="59.2" width="6.4" height="18.8" rx="1"><title>2026-07-28 &mdash; 10/16 (62%)</title></rect>
+<rect class="dev up" x="604.3" y="63.0" width="6.4" height="15.0" rx="1"><title>2026-07-29 &mdash; 12/20 (60%)</title></rect>
+<rect class="dev up" x="614.1" y="53.0" width="6.4" height="25.0" rx="1"><title>2026-07-30 &mdash; 8/12 (67%)</title></rect>
+<rect class="dev up" x="623.8" y="63.0" width="6.4" height="15.0" rx="1"><title>2026-07-31 &mdash; 12/20 (60%)</title></rect>
+<rect class="dev up" x="633.5" y="36.3" width="6.4" height="41.7" rx="1"><title>2026-08-01 &mdash; 14/18 (78%)</title></rect>
+<rect class="dev up" x="643.2" y="78.0" width="6.4" height="1.2" rx="1"><title>2026-08-02 &mdash; 9/18 (50%)</title></rect>
+<rect class="dev up" x="653.0" y="71.2" width="6.4" height="6.8" rx="1"><title>2026-08-03 &mdash; 6/11 (55%)</title></rect>
+<rect class="dev up" x="662.7" y="40.5" width="6.4" height="37.5" rx="1"><title>2026-08-04 &mdash; 12/16 (75%)</title></rect>
+<rect class="dev up" x="672.4" y="50.4" width="6.4" height="27.6" rx="1"><title>2026-08-05 &mdash; 13/19 (68%)</title></rect>
+<rect class="dev up" x="682.2" y="49.2" width="6.4" height="28.8" rx="1"><title>2026-08-06 &mdash; 9/13 (69%)</title></rect>
+<rect class="dev up" x="691.9" y="74.1" width="6.4" height="3.9" rx="1"><title>2026-08-07 &mdash; 10/19 (53%)</title></rect>
+<rect class="dev up" x="701.6" y="44.7" width="6.4" height="33.3" rx="1"><title>2026-08-08 &mdash; 13/18 (72%)</title></rect>
+<rect class="dev up" x="711.4" y="40.5" width="6.4" height="37.5" rx="1"><title>2026-08-09 &mdash; 15/20 (75%)</title></rect>
+<rect class="dev up" x="721.1" y="63.0" width="6.4" height="15.0" rx="1"><title>2026-08-10 &mdash; 6/10 (60%)</title></rect>
+<rect class="dev up" x="730.8" y="69.7" width="6.4" height="8.3" rx="1"><title>2026-08-11 &mdash; 10/18 (56%)</title></rect>
+<rect class="dev up" x="740.5" y="55.9" width="6.4" height="22.1" rx="1"><title>2026-08-12 &mdash; 11/17 (65%)</title></rect>
+<rect class="dev up" x="750.3" y="53.0" width="6.4" height="25.0" rx="1"><title>2026-08-13 &mdash; 4/6 (67%)</title></rect>
+<line class="base" x1="40" y1="78" x2="760" y2="78"/>
+<text class="ax" x="32" y="82" text-anchor="end">50%</text>
+<text class="ax" x="40" y="164">2026-06-01</text>
+<text class="ax" x="760" y="164" text-anchor="end">2026-08-13</text>
+      </svg>
+      <div class="legend">
+        <span><span class="sw-dot"></span>Beat a coin flip</span>
+        <span><span class="sw-dot" style="background:var(--down)"></span>Did not</span>
+        <span>Baseline = 50%</span>
+      </div>
+    </figure>
+  </section>
+
+  <section>
+    <h2>By league</h2>
+    <div class="tiles">
+      <div><div class="k">WNBA</div><div class="v">71.9%</div>
+        <div class="s">178 picks</div></div>
+      <div><div class="k">MLB</div><div class="v">55.0%</div>
+        <div class="s">933 picks</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Recent issues</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>Issue</th><th>Record</th><th>Hit rate</th></tr></thead>
+      <tbody><tr><td class="d">2026-08-13</td><td class="rec">4/6</td><td class="pc good">67%</td></tr>
+<tr><td class="d">2026-08-12</td><td class="rec">11/17</td><td class="pc good">65%</td></tr>
+<tr><td class="d">2026-08-11</td><td class="rec">10/18</td><td class="pc good">56%</td></tr>
+<tr><td class="d">2026-08-10</td><td class="rec">6/10</td><td class="pc good">60%</td></tr>
+<tr><td class="d">2026-08-09</td><td class="rec">15/20</td><td class="pc good">75%</td></tr>
+<tr><td class="d">2026-08-08</td><td class="rec">13/18</td><td class="pc good">72%</td></tr>
+<tr><td class="d">2026-08-07</td><td class="rec">10/19</td><td class="pc good">53%</td></tr>
+<tr><td class="d">2026-08-06</td><td class="rec">9/13</td><td class="pc good">69%</td></tr>
+<tr><td class="d">2026-08-05</td><td class="rec">13/19</td><td class="pc good">68%</td></tr>
+<tr><td class="d">2026-08-04</td><td class="rec">12/16</td><td class="pc good">75%</td></tr>
+<tr><td class="d">2026-08-03</td><td class="rec">6/11</td><td class="pc good">55%</td></tr>
+<tr><td class="d">2026-08-02</td><td class="rec">9/18</td><td class="pc good">50%</td></tr>
+<tr><td class="d">2026-08-01</td><td class="rec">14/18</td><td class="pc good">78%</td></tr>
+<tr><td class="d">2026-07-31</td><td class="rec">12/20</td><td class="pc good">60%</td></tr></tbody>
+    </table></div>
+  </section>
+
+  <footer class="foot">
+    <p class="note"><b>Back-issues aren't rewritten.</b> Ratings for an issue dated
+      D only ever see games played before D, so each back-issue is what the
+      newsletter would have printed that morning &mdash; not a hindsight edit.</p>
+    <p class="note"><b>MLB is dragging the average, on purpose.</b> Baseball is
+      55.0% across 933 picks and we publish it anyway, because
+      a picks sheet that quietly drops its worst sport isn't a track record.</p>
+    <p style="color:var(--mute);font-size:13.5px">Not betting advice. Against real
+      closing moneylines these picks lose about 5.5% per bet.</p>
+  </footer>
+</div>
