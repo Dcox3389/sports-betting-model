@@ -24,20 +24,29 @@ TIERS = [("Headline", 0.85, "84%"), ("Strong", 0.70, "71%"),
          ("Lean", 0.60, "64%"), ("Coin-flip", 0.00, "57%")]
 
 
-def get(url, timeout=60):
+# Every failed fetch lands here. Callers used to do `(get(u) or {}).get(...)`,
+# which turned a network failure into "no games scheduled" -- a broken run that
+# looks like a quiet day. An empty issue must be provably empty, not silently
+# empty, so failures are recorded and main() refuses to publish over them.
+FETCH_ERRORS = []
+
+
+def get(url, timeout=60, label=""):
+    last = None
     for _ in range(3):
         try:
             with urllib.request.urlopen(url, timeout=timeout) as r:
                 return json.loads(r.read())
-        except Exception:
-            pass
+        except Exception as e:
+            last = e
+    FETCH_ERRORS.append((label or url[:70], type(last).__name__ if last else "?"))
     return None
 
 
 def load_history(today):
     """All completed games this season, for ratings. MLB via statsapi, WNBA via ESPN."""
     games = []
-    d = get(MLB_API.format("2026-03-01", today))
+    d = get(MLB_API.format("2026-03-01", today), label="mlb history")
     for blk in (d or {}).get("dates", []):
         for g in blk["games"]:
             if g["status"]["abstractGameState"] != "Final":
@@ -48,7 +57,7 @@ def load_history(today):
             games.append(dict(lg="mlb", date=g["officialDate"],
                               home=h["team"]["name"], away=a["team"]["name"],
                               hs=h["score"], as_=a["score"]))
-    w = get(ESPN.format("20260501", today.replace("-", "")))
+    w = get(ESPN.format("20260501", today.replace("-", "")), label="wnba history")
     for ev in (w or {}).get("events", []):
         try:
             c = ev["competitions"][0]
@@ -145,7 +154,7 @@ def build_ratings(games):
 
 def slate(target):
     out = []
-    d = get(MLB_API.format(target, target))
+    d = get(MLB_API.format(target, target), label="mlb slate")
     for blk in (d or {}).get("dates", []):
         for g in blk["games"]:
             if g["status"]["abstractGameState"] == "Final":
@@ -175,7 +184,7 @@ def slate(target):
                                 neutral=bool(c.get("neutralSite"))))
             except Exception:
                 continue
-    w = get(ESPN.format(tgt, tgt))
+    w = get(ESPN.format(tgt, tgt), label="wnba slate")
     for ev in (w or {}).get("events", []):
         try:
             c = ev["competitions"][0]
@@ -490,6 +499,18 @@ def main():
     print(f"  slate: {len(games)} games")
     picks = rate(games, elo, cnt, form)
     print(f"  rated: {len(picks)}")
+
+    if FETCH_ERRORS:
+        print(f"\n  !! {len(FETCH_ERRORS)} data source(s) unreachable:")
+        for lbl, err in FETCH_ERRORS:
+            print(f"       {lbl}  ({err})")
+        if not picks:
+            raise SystemExit(
+                "\nABORTED: no games rated AND data sources failed. This is a "
+                "network failure, not an empty schedule -- publishing now would "
+                "ship a blank issue that looks like a quiet day. Re-run when "
+                "the sources are reachable.")
+        print("       (continuing: some picks were still rated)")
     try:
         import news
         news.annotate(picks)
