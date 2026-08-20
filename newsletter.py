@@ -196,7 +196,10 @@ def rate(games, elo, cnt, form):
     picks = []
     for g in games:
         lg = g["lg"]; _, hfa, _ = ELO[lg]
-        rh, ra = R(lg, g["home"]), R(lg, g["away"])
+        # `elo` arrives already built; unrated teams fall back to their
+        # division baseline rather than a bare 1500 (see divisions.py).
+        rh = elo.get((lg, g["home"]), start_rating(lg, g["home"]))
+        ra = elo.get((lg, g["away"]), start_rating(lg, g["away"]))
         if not cnt[(lg, g["home"])] or not cnt[(lg, g["away"])]:
             continue
         adv = 0.0 if g.get("neutral") else hfa

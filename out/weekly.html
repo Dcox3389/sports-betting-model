@@ -1,0 +1,153 @@
+<title>Weekly Report &mdash; Aug 20 &ndash; Aug 26, 2026</title>
+<style>
+:root { --ink:#12161C; --paper:#ECEEF1; --card:#FFFFFF; --line:#C9D0D8; --mute:#5C6773;
+  --signal:#0F8F94; --signal-deep:#0A5F63; --sand:#8C7A4F; --neg:#B4423F; --dead:#9AA5B1; }
+@media (prefers-color-scheme: dark) { :root { --ink:#E6EAEF; --paper:#0E1217; --card:#161C24;
+  --line:#2A333E; --mute:#8895A4; --signal:#2BB3B8; --signal-deep:#7FD6D9; --sand:#C0A868;
+  --neg:#E07572; --dead:#4A5561; } }
+:root[data-theme="dark"] { --ink:#E6EAEF; --paper:#0E1217; --card:#161C24; --line:#2A333E;
+  --mute:#8895A4; --signal:#2BB3B8; --signal-deep:#7FD6D9; --sand:#C0A868; --neg:#E07572;
+  --dead:#4A5561; }
+:root[data-theme="light"] { --ink:#12161C; --paper:#ECEEF1; --card:#FFFFFF; --line:#C9D0D8;
+  --mute:#5C6773; --signal:#0F8F94; --signal-deep:#0A5F63; --sand:#8C7A4F; --neg:#B4423F;
+  --dead:#9AA5B1; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--paper); color:var(--ink);
+  font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+.wrap { max-width:840px; margin:0 auto; padding:40px 22px 80px; display:flex;
+  flex-direction:column; gap:34px; }
+.mast { border-bottom:2px solid var(--ink); padding-bottom:16px; display:flex;
+  flex-direction:column; gap:8px; }
+h1 { font-family:Georgia,serif; font-size:clamp(31px,6vw,48px); line-height:1.03;
+  letter-spacing:-.025em; margin:0; text-wrap:balance; }
+.dateline { font-family:ui-monospace,Consolas,monospace; font-size:12px; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--mute); }
+h2 { font-family:Georgia,serif; font-size:22px; margin:0 0 5px; letter-spacing:-.01em; }
+.sub { color:var(--mute); font-size:14.5px; margin:0 0 14px; max-width:66ch; }
+section { display:flex; flex-direction:column; }
+table { width:100%; border-collapse:collapse; font-size:14.5px; }
+th { font-family:ui-monospace,Consolas,monospace; font-size:10.5px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--mute); text-align:left; font-weight:500;
+  padding:0 10px 7px 0; border-bottom:1px solid var(--line); white-space:nowrap; }
+td { padding:8px 10px 8px 0; border-bottom:1px solid var(--line); vertical-align:middle; }
+.mu { color:var(--mute); } .pk { font-weight:640; white-space:nowrap; }
+.l10 { font-family:ui-monospace,Consolas,monospace; font-variant-numeric:tabular-nums; }
+.neg { color:var(--neg); }
+tr.ok td { background:rgba(15,143,148,.10); }
+.cf { display:flex; align-items:center; gap:9px; min-width:130px; }
+.meter { display:block; width:70px; height:7px; background:var(--line); flex:none; }
+.fill { display:block; height:100%; background:var(--signal); }
+.fill.hot { background:var(--signal-deep); } .fill.dead { background:var(--dead); }
+.num { font-family:ui-monospace,Consolas,monospace; font-variant-numeric:tabular-nums;
+  font-weight:600; font-size:13.5px; } .num.muted { color:var(--mute); font-weight:400; }
+.scroll { overflow-x:auto; }
+.note { border-left:3px solid var(--sand); padding:2px 0 2px 16px; }
+.note b { color:var(--sand); }
+.verdict { border:1px solid var(--line); background:var(--card); padding:17px 19px;
+  display:flex; flex-direction:column; gap:7px; }
+.verdict .big { font-family:ui-monospace,Consolas,monospace; font-size:27px; font-weight:600;
+  color:var(--signal-deep); line-height:1.1; }
+.foot { border-top:2px solid var(--ink); padding-top:16px; display:flex;
+  flex-direction:column; gap:14px; font-size:14.5px; }
+</style>
+<div class="wrap">
+  <header class="mast">
+    <div class="dateline">The Edge Report &middot; Weekly</div>
+    <h1>Week of Aug 20 &ndash; Aug 26, 2026</h1>
+    <div class="dateline">114 games rated across 2 leagues</div>
+  </header>
+
+  <section>
+    <h2>The board</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>League</th><th>Games</th><th>85%+</th><th>70%+</th><th>60%+</th></tr></thead>
+      <tbody><tr><td class="pk">MLB</td><td class="l10">94</td><td class="l10">0</td><td class="l10">0</td><td class="l10">13</td></tr>
+<tr><td class="pk">WNBA</td><td class="l10">20</td><td class="l10">2</td><td class="l10">8</td><td class="l10">14</td></tr></tbody></table></div>
+  </section>
+
+  <section>
+    <h2>Strongest picks of the week</h2>
+    <p class="sub">Confidence is what the model says. Tier hits is what that band has
+      actually delivered across 1,111 graded picks &mdash; the second number is the one
+      to trust.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Day</th><th>Pick</th><th>Matchup</th><th>Confidence</th>
+        <th>Tier hits</th></tr></thead>
+      <tbody><tr><td class="l10">Sun 23</td><td class="pk">Dallas Wings</td><td class="mu">Seattle Storm @ Dallas Wings</td><td class="cf"><span class="meter"><span class="fill hot" style="width:76.8%"></span></span><span class="num">88%</span></td><td class="l10">85%</td></tr>
+<tr><td class="l10">Thu 20</td><td class="pk">Las Vegas Aces</td><td class="mu">Connecticut Sun @ Las Vegas Aces</td><td class="cf"><span class="meter"><span class="fill hot" style="width:75.9%"></span></span><span class="num">88%</span></td><td class="l10">85%</td></tr>
+<tr><td class="l10">Wed 26</td><td class="pk">Golden State Valkyries</td><td class="mu">Golden State Valkyries @ Connecticut Sun</td><td class="cf"><span class="meter"><span class="fill hot" style="width:65.4%"></span></span><span class="num">83%</span></td><td class="l10">74%</td></tr>
+<tr><td class="l10">Tue 25</td><td class="pk">Dallas Wings</td><td class="mu">Portland Fire @ Dallas Wings</td><td class="cf"><span class="meter"><span class="fill hot" style="width:59.2%"></span></span><span class="num">80%</span></td><td class="l10">74%</td></tr>
+<tr><td class="l10">Sun 23</td><td class="pk">Las Vegas Aces</td><td class="mu">Las Vegas Aces @ Toronto Tempo</td><td class="cf"><span class="meter"><span class="fill hot" style="width:51.2%"></span></span><span class="num">76%</span></td><td class="l10">74%</td></tr>
+<tr><td class="l10">Mon 24</td><td class="pk">Minnesota Lynx</td><td class="mu">Golden State Valkyries @ Minnesota Lynx</td><td class="cf"><span class="meter"><span class="fill hot" style="width:49.7%"></span></span><span class="num">75%</span></td><td class="l10">74%</td></tr>
+<tr><td class="l10">Fri 21</td><td class="pk">Golden State Valkyries</td><td class="mu">Golden State Valkyries @ Chicago Sky</td><td class="cf"><span class="meter"><span class="fill hot" style="width:44.7%"></span></span><span class="num">72%</span></td><td class="l10">74%</td></tr>
+<tr><td class="l10">Sun 23</td><td class="pk">Indiana Fever</td><td class="mu">Indiana Fever @ Chicago Sky</td><td class="cf"><span class="meter"><span class="fill hot" style="width:43.5%"></span></span><span class="num">72%</span></td><td class="l10">74%</td></tr>
+<tr><td class="l10">Thu 20</td><td class="pk">Atlanta Dream</td><td class="mu">Atlanta Dream @ Los Angeles Sparks</td><td class="cf"><span class="meter"><span class="fill" style="width:36.3%"></span></span><span class="num">68%</span></td><td class="l10">61%</td></tr>
+<tr><td class="l10">Mon 24</td><td class="pk">Atlanta Dream</td><td class="mu">Atlanta Dream @ Los Angeles Sparks</td><td class="cf"><span class="meter"><span class="fill" style="width:36.3%"></span></span><span class="num">68%</span></td><td class="l10">61%</td></tr></tbody></table></div>
+  </section>
+
+  <section>
+    <h2>Day by day</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>Day</th><th>Games</th><th>70%+</th><th>Best call</th></tr></thead>
+      <tbody><tr><td class="pk">Thu Aug 20</td><td class="l10">12</td><td class="l10">1</td><td class="mu">Las Vegas Aces (88%)</td></tr>
+<tr><td class="pk">Fri Aug 21</td><td class="l10">18</td><td class="l10">1</td><td class="mu">Golden State Valkyries (72%)</td></tr>
+<tr><td class="pk">Sat Aug 22</td><td class="l10">18</td><td class="l10">0</td><td class="mu">Los Angeles Sparks (67%)</td></tr>
+<tr><td class="pk">Sun Aug 23</td><td class="l10">19</td><td class="l10">3</td><td class="mu">Dallas Wings (88%)</td></tr>
+<tr><td class="pk">Mon Aug 24</td><td class="l10">12</td><td class="l10">1</td><td class="mu">Minnesota Lynx (75%)</td></tr>
+<tr><td class="pk">Tue Aug 25</td><td class="l10">18</td><td class="l10">1</td><td class="mu">Dallas Wings (80%)</td></tr>
+<tr><td class="pk">Wed Aug 26</td><td class="l10">17</td><td class="l10">1</td><td class="mu">Golden State Valkyries (83%)</td></tr></tbody></table></div>
+  </section>
+
+  <section>
+    <h2>Parlays: can one hold an 80%+ win rate?</h2>
+    <p class="sub">Legs priced at measured tier hit rates, not model confidence. The
+      model is overconfident below its top tier, so raw numbers would inflate every
+      estimate here. Highlighted rows clear 80%.</p>
+    <div class="verdict">
+      <div class="dateline">This week&rsquo;s board sustains 80%+ up to</div>
+      <div class="big">1 leg</div>
+      <div class="mu">A single top pick hits 84.6%. Adding one more leg drops the slip
+        to 71.6% &mdash; under the bar before you have even built a parlay.</div>
+    </div>
+    <div class="scroll" style="margin-top:14px"><table>
+      <thead><tr><th>Legs</th><th>Win rate</th><th>Fair payout</th>
+        <th>EV at book prices</th></tr></thead>
+      <tbody><tr class="ok"><td class="pk">1</td><td class="l10"><b>84.6%</b></td><td class="l10">1.18x</td><td class="l10 neg">-4.1%</td></tr>
+<tr class=""><td class="pk">2</td><td class="l10"><b>71.6%</b></td><td class="l10">1.40x</td><td class="l10 neg">-8.0%</td></tr>
+<tr class=""><td class="pk">3</td><td class="l10"><b>52.7%</b></td><td class="l10">1.90x</td><td class="l10 neg">-11.8%</td></tr>
+<tr class=""><td class="pk">4</td><td class="l10"><b>38.9%</b></td><td class="l10">2.57x</td><td class="l10 neg">-15.4%</td></tr>
+<tr class=""><td class="pk">5</td><td class="l10"><b>28.7%</b></td><td class="l10">3.49x</td><td class="l10 neg">-18.8%</td></tr>
+<tr class=""><td class="pk">6</td><td class="l10"><b>21.1%</b></td><td class="l10">4.74x</td><td class="l10 neg">-22.1%</td></tr>
+<tr class=""><td class="pk">7</td><td class="l10"><b>15.6%</b></td><td class="l10">6.43x</td><td class="l10 neg">-25.3%</td></tr>
+<tr class=""><td class="pk">8</td><td class="l10"><b>11.5%</b></td><td class="l10">8.72x</td><td class="l10 neg">-28.4%</td></tr></tbody></table></div>
+  </section>
+
+  <section>
+    <h2>Where 80%+ parlays actually exist</h2>
+    <p class="sub">College football headline picks hit 96.6% out-of-sample last season
+      across 87 picks. That is high enough to stack. Season opens Aug 29.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Legs</th><th>Win rate</th><th>Fair payout</th>
+        <th>EV at book prices</th></tr></thead>
+      <tbody><tr class="ok"><td class="pk">2</td><td class="l10"><b>93.3%</b></td><td class="l10">1.07x</td><td class="l10 neg">-8.0%</td></tr>
+<tr class="ok"><td class="pk">3</td><td class="l10"><b>90.1%</b></td><td class="l10">1.11x</td><td class="l10 neg">-11.8%</td></tr>
+<tr class="ok"><td class="pk">4</td><td class="l10"><b>87.1%</b></td><td class="l10">1.15x</td><td class="l10 neg">-15.4%</td></tr>
+<tr class="ok"><td class="pk">5</td><td class="l10"><b>84.1%</b></td><td class="l10">1.19x</td><td class="l10 neg">-18.8%</td></tr>
+<tr class="ok"><td class="pk">6</td><td class="l10"><b>81.3%</b></td><td class="l10">1.23x</td><td class="l10 neg">-22.1%</td></tr>
+<tr class=""><td class="pk">7</td><td class="l10"><b>78.5%</b></td><td class="l10">1.27x</td><td class="l10 neg">-25.3%</td></tr>
+<tr class=""><td class="pk">8</td><td class="l10"><b>75.8%</b></td><td class="l10">1.32x</td><td class="l10 neg">-28.4%</td></tr></tbody></table></div>
+  </section>
+
+  <footer class="foot">
+    <p class="note"><b>The catch is the payout column.</b> A six-leg college football
+      parlay clears 80% &mdash; and pays 1.23x. Fifty dollars returns about sixty-two.
+      The win rate is real; the money is not, because the market prices those
+      favourites correctly.</p>
+    <p class="note"><b>The vig compounds at roughly 4% per leg.</b> That is parlays in
+      one line: one leg is &minus;4.1%, six legs &minus;22.1%, ten legs &minus;34.1%.
+      Every leg multiplies expected value downward.</p>
+    <p style="color:var(--mute);font-size:13.5px">Not betting advice. Graded against real
+      closing moneylines these picks return &minus;5.5% per bet. The model predicts
+      winners well and does not beat prices &mdash; those are separate skills.</p>
+  </footer>
+</div>
