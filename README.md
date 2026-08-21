@@ -181,6 +181,27 @@ NFL home-field is 35 Elo, derived from the 55.2% home win rate over the
 warm-up seasons — not tuned on the holdout. An earlier 60, borrowed from
 basketball, cost ~1.4 points of accuracy.
 
+## Daily repricing
+
+`price_sheet.py` fills a tracking sheet's `odds` column with live DraftKings
+moneylines and compares our calibrated chance against the market's de-vigged
+number. Run it every morning — coverage fills in as books post, roughly one
+day ahead for MLB and WNBA.
+
+```bash
+python price_sheet.py
+```
+
+A Windows scheduled task, `EdgeReport-PriceSheet`, runs `run_price_sheet.cmd`
+daily at 07:00 local and appends to `out/price_sheet_log.txt`. Remove it with:
+
+```bash
+schtasks /Delete /TN "EdgeReport-PriceSheet" /F
+```
+
+Coverage is reported per date so "not posted yet" can never be mistaken for
+"request failed" — the failure mode that has bitten this project three times.
+
 ## Red team audit
 
 `redteam.py` attacks this project's own conclusions. Run it after any change
