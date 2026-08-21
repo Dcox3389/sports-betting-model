@@ -61,9 +61,17 @@ def collect(days):
     return today, hist, picks
 
 
+def span_name(today, days):
+    """Name files by the window they cover, so a 7-day and a 10-day sheet
+    never collide (and so an open viewer holding one file cannot block the
+    other)."""
+    end = today + dt.timedelta(days - 1)
+    return f"betsheet_{today.isoformat()}_to_{end.isoformat()}"
+
+
 def build_pdf(today, days, picks, hist):
     end = today + dt.timedelta(days - 1)
-    path = os.path.join(OUT, f"betsheet_{today.isoformat()}.pdf")
+    path = os.path.join(OUT, span_name(today, days) + ".pdf")
     doc = SimpleDocTemplate(path, pagesize=letter,
                             leftMargin=0.6 * inch, rightMargin=0.6 * inch,
                             topMargin=0.6 * inch, bottomMargin=0.6 * inch,
@@ -100,6 +108,31 @@ def build_pdf(today, days, picks, hist):
             "graded picks.", body),
     ]
 
+    # Instructions go BEFORE the table. They are read once, up front -- and
+    # putting them after the rows left a near-empty trailing page whenever the
+    # table happened to orphan a row or two.
+    story.append(Paragraph("How to run the test", h2))
+    for line in [
+        "1. Print this sheet, or keep it open, at the start of the week.",
+        "2. As each game finishes, mark <b>Won?</b> with Y or N. Do not skip losses.",
+        "3. Record the odds offered in <b>Notes</b> if you can &mdash; without them "
+        "this measures accuracy only, never profit.",
+        "4. At week's end, compare each confidence group against its Chance column. "
+        "That is the whole test.",
+        "5. Keep sheets. A verdict needs 200+ rows, not one week.",
+    ]:
+        story.append(Paragraph(line, body))
+    story.append(Spacer(1, 5))
+    story.append(Paragraph(
+        "<b>What this sheet cannot tell you:</b> whether the picks make money. "
+        "Accuracy and profit are different questions &mdash; graded against real "
+        "prices, these picks returned &minus;5.5% per bet, because the market "
+        "prices them at least as well as the model does.", body))
+    story.append(Spacer(1, 2))
+    story.append(Paragraph(
+        "Not betting advice. This sheet exists so the model can be judged on "
+        "evidence rather than on a hunch.", note))
+
     story.append(Paragraph("Picks, strongest first", h2))
     rows = [["Date", "Matchup", "Pick", "Model", "Chance", "Won?", "Notes"]]
     for p in sorted(picks, key=lambda x: -x["conf"]):
@@ -126,36 +159,14 @@ def build_pdf(today, days, picks, hist):
         ("LINEBELOW", (0, 1), (-1, -1), 0.25, LINE),
         ("BOX", (5, 1), (6, -1), 0.4, LINE),
         ("INNERGRID", (5, 1), (6, -1), 0.25, LINE),
-        ("TOPPADDING", (0, 0), (-1, -1), 3.5),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 3.5),
+        ("TOPPADDING", (0, 0), (-1, -1), 2.4),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 2.4),
     ]
     for i in range(1, len(rows)):
         if i % 2 == 0:
             style.append(("BACKGROUND", (0, i), (4, i), BAND))
     t.setStyle(TableStyle(style))
     story.append(t)
-
-    story.append(Paragraph("How to run the test", h2))
-    for line in [
-        "1. Print this sheet, or keep it open, at the start of the week.",
-        "2. As each game finishes, mark <b>Won?</b> with Y or N. Do not skip losses.",
-        "3. At week's end, count: how many of the 85%+ rows won? the 70% rows?",
-        "4. Compare each group against its Chance column. That is the whole test.",
-        "5. Keep sheets. A verdict needs 200+ rows, not one week.",
-    ]:
-        story.append(Paragraph(line, body))
-
-    story.append(Paragraph("What this sheet cannot tell you", h2))
-    story.append(Paragraph(
-        "Whether the picks make money. Accuracy and profit are different "
-        "questions: graded against real closing prices, these picks returned "
-        "&minus;5.5% per bet, because the market prices them at least as well as "
-        "the model does. To test profitability you would also have to record the "
-        "odds offered at the time &mdash; there is room in Notes.", body))
-    story.append(Spacer(1, 6))
-    story.append(Paragraph(
-        "Not betting advice. This sheet exists so the model can be judged on "
-        "evidence rather than on a hunch.", note))
 
     doc.build(story)
     return path
@@ -180,7 +191,7 @@ def main():
     print(f"wrote {path}")
     # machine-readable twin: filling the CSV is what score_sheet.py reads back
     import csv as _csv
-    cpath = os.path.join(OUT, f"betsheet_{today.isoformat()}.csv")
+    cpath = os.path.join(OUT, span_name(today, days) + ".csv")
     with open(cpath, "w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
         w.writerow(["date", "league", "matchup", "pick", "model_conf",
