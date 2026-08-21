@@ -1,0 +1,86 @@
+========================================================================
+RED TEAM AUDIT
+========================================================================
+
+[T1] Are ESPN odds actually CLOSING odds?
+    VERDICT: UNPROVEN - claim overstated
+    n=1295 priced games, median hold 4.25%
+    share of games with hold < 2% (sharp/late pricing): 0.0%
+    ESPN exposes ONE snapshot per game with no timestamp. A 4-3% hold is
+    typical of mainline pricing generally -- it does NOT identify the
+    snapshot as the close. If these are OPENING numbers, the -5.5% ROI is
+    measured against a softer line than a bettor would actually face at
+    kickoff, which would make the real result WORSE, not better.
+
+[T2] Is odds coverage biased?
+    VERDICT: CONCERN - skewed by league
+    priced 1295 of 1838 (70%); 543 missing
+    avg margin  priced 13.12  vs  unpriced 12.45
+    coverage nba     80%  (1065 of 1334)
+    coverage wnba    46%  (230 of 504)
+    spread between leagues: 34%
+    The market test is weighted toward whichever league is best covered
+    and speaks correspondingly less for the others.
+
+[T3] Does the devig method drive the result?
+    VERDICT: PASS - robust to method
+    mean (actual - fair) by devig method:
+      proportional  -0.0079
+      power         -0.0109
+      additive      -0.0098
+    spread across methods: 0.0030
+    All three stay negative, so 'no edge' is not an artifact of one
+    devig choice. Proportional is known to overstate favourites, so
+    it is the most GENEROUS to our favourite-heavy picks -- and it
+    still shows no edge.
+
+[T4] Is the walk-forward genuinely leak-free?
+    VERDICT: PASS - truncation invariant
+    graded 2025-10-18 twice from the cached CFB season: once with all
+    2889 games, once with every game after that date removed
+    picks compared: 48   differing confidences: 0
+    identical to 9 decimal places -- future games provably cannot
+    influence a prediction dated before them
+
+[T5] Do parlays assume false independence?
+    VERDICT: PASS - near zero
+    same-day same-league pick pairs: n=6265, r=-0.0028
+    cross-day control pairs:        n=29, r=+nan
+    Parlay math multiplies leg probabilities, which assumes independence.
+    Positive same-day correlation would make real parlays hit MORE often
+    than estimated; negative would make them hit less.
+
+[T6] Was CFB home-field tuned on the holdout?
+    VERDICT: CONFIRMED - minor overfit
+    NFL home-field (35) was derived from the 55.2% home win rate over the
+    WARM-UP seasons only -- legitimate.
+    CFB home-field (60) was chosen because it topped a sweep run ON THE
+    HELD-OUT SEASON (71.3% at 60 vs 71.1% at 65). That is tuning on the
+    holdout, however mild.
+    Impact is small -- the sweep spanned 69.5%-71.3% across HFA 0-100, so
+    the parameter barely matters -- but the CFB accuracy figure is very
+    slightly optimistic and should not be quoted to a tenth of a point.
+
+[T7] Is 84% a threshold-shopping artifact?
+    VERDICT: MOSTLY PASS
+    accuracy is monotone in the threshold, not a spike at 85%:
+      >= 80.0%  n=1877   acc 79.4%
+      >= 82.5%  n=1396   acc 82.0%
+      >= 85.0%  n=995    acc 84.0%
+      >= 87.5%  n=691    acc 85.4%
+      >= 90.0%  n=464    acc 86.9%
+    A cherry-picked threshold shows a bump that vanishes on either
+    side. This rises smoothly, which is what a real effect does.
+    The 85% CUTOFF was still chosen after seeing the data, so the
+    84% figure carries selection risk even though the trend is real.
+
+========================================================================
+SUMMARY
+========================================================================
+  T1  UNPROVEN - claim overstated     Are ESPN odds actually CLOSING odds?
+  T2  CONCERN - skewed by league      Is odds coverage biased?
+  T3  PASS - robust to method         Does the devig method drive the result?
+  T4  PASS - truncation invariant     Is the walk-forward genuinely leak-free?
+  T5  PASS - near zero                Do parlays assume false independence?
+  T6  CONFIRMED - minor overfit       Was CFB home-field tuned on the holdout?
+  T7  MOSTLY PASS                     Is 84% a threshold-shopping artifact?

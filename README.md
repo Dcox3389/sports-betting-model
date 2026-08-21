@@ -181,6 +181,32 @@ NFL home-field is 35 Elo, derived from the 55.2% home win rate over the
 warm-up seasons — not tuned on the holdout. An earlier 60, borrowed from
 basketball, cost ~1.4 points of accuracy.
 
+## Red team audit
+
+`redteam.py` attacks this project's own conclusions. Run it after any change
+that touches the model or the market test.
+
+| # | Threat | Verdict |
+|---|---|---|
+| T1 | Are ESPN odds actually *closing* odds? | **UNPROVEN — claim overstated** |
+| T2 | Is odds coverage biased? | **CONCERN — NBA 80%, WNBA 46%** |
+| T3 | Does the devig method drive "no edge"? | PASS — robust across 3 methods |
+| T4 | Is the walk-forward leak-free? | PASS — truncation invariant, 48 picks |
+| T5 | Do parlays assume false independence? | PASS — same-day r = −0.003 |
+| T6 | Was CFB home-field tuned on the holdout? | **CONFIRMED — minor overfit** |
+| T7 | Is 84% a threshold-shopping artifact? | MOSTLY PASS — monotone, not a spike |
+
+Two claims elsewhere in this README should be read with T1 and T2 in mind:
+
+- **"Beats/loses to closing lines"** — ESPN exposes one untimed odds snapshot
+  per game. It may be an opening number. If so the real ROI is *worse* than
+  −5.5%, not better, since opening lines are softer than closes.
+- **"Does not beat the market"** — rests on a sample that is 82% NBA, because
+  WNBA odds coverage is only 46%. The conclusion is strongest for the NBA.
+
+`edge_test.csv` is required for T3 and `screen_events.csv` for T7; both are
+gitignored, so regenerate them locally before running the audit.
+
 ## Caveats
 
 - The model is **overconfident below 85%** — it says 82% and delivers 74%. Only the
