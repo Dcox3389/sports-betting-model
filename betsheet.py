@@ -7,10 +7,11 @@ model can be tested against reality at zero cost. That is what a beta test is:
 if the picks are profitable, a filled-in sheet will show it; if they are not,
 nothing was lost proving it.
 
-The "chance" column is NOT the model's raw confidence. The model is
-overconfident below its top tier -- it says 82% and delivers 74% -- so each
-pick is shown at the rate its tier has actually hit across 1,111 graded picks
-in the archive.
+The "chance" column is NOT the model's raw confidence. Each pick is shown at
+the rate its tier has actually hit IN ITS SITUATION -- see calibration.py,
+which splits football into early-season and main-season because ratings
+entering a season still describe last year's roster. A value marked * is
+inherited rather than measured.
 
     python betsheet.py          # next 7 days
     python betsheet.py 3        # next 3 days
@@ -27,9 +28,7 @@ from reportlab.lib.units import inch
 from reportlab.platypus import (SimpleDocTemplate, Table, TableStyle, Paragraph,
                                 Spacer, PageBreak)
 
-# Measured hit rates by tier -- archive.py (1,111 graded picks), football.py
-CALIBRATED = [(0.85, 0.846), (0.70, 0.737), (0.60, 0.613), (0.00, 0.551)]
-CFB_HEADLINE = 0.966
+import calibration
 
 INK = colors.HexColor("#12161C")
 TEAL = colors.HexColor("#0A5F63")
@@ -39,13 +38,11 @@ BAND = colors.HexColor("#EEF3F4")
 SAND = colors.HexColor("#8C7A4F")
 
 
-def calibrated(conf, lg):
-    if lg == "cfb" and conf >= 0.85:
-        return CFB_HEADLINE
-    for lo, actual in CALIBRATED:
-        if conf >= lo:
-            return actual
-    return 0.551
+def calibrated(conf, lg, date="2026-01-01"):
+    """Hit rate for this pick IN ITS SITUATION -- see calibration.py. Returns
+    (rate, thin) where thin marks an inherited rather than measured estimate."""
+    rate, n, src = calibration.chance(lg, date, conf)
+    return rate, not src.startswith("measured")
 
 
 def collect(days):
@@ -102,10 +99,19 @@ def build_pdf(today, days, picks, hist):
             "and it will have cost nothing to find out.", body),
         Spacer(1, 4),
         Paragraph(
-            "The <b>Chance</b> column is not the model's raw confidence. The model "
-            "is overconfident below its top tier (it says 82% and delivers 74%), so "
-            "each pick is shown at the rate its tier has actually hit across 1,111 "
-            "graded picks.", body),
+            "The <b>Chance</b> column is not the model's raw confidence &mdash; the "
+            "model is overconfident, saying 82% where it delivers 74%. Each pick is "
+            "shown instead at the rate its tier has actually hit <i>in the situation "
+            "this pick is being made in</i>. That distinction matters most for "
+            "football: college football's top tier hits 96% from week four onward, "
+            "but only about 63% of that edge is present in an opening week, when the "
+            "ratings still describe last season's roster.", body),
+        Spacer(1, 3),
+        Paragraph(
+            "A Chance marked <b>*</b> is inherited rather than measured &mdash; too "
+            "few graded picks exist for that exact tier and situation, so the figure "
+            "is shrunk toward a related one. Treat starred rows as the softest "
+            "numbers on the sheet.", body),
     ]
 
     # Instructions go BEFORE the table. They are read once, up front -- and
@@ -141,7 +147,8 @@ def build_pdf(today, days, picks, hist):
             p["matchup"][:38],
             p["pick"][:22],
             f"{p['conf']:.0%}",
-            f"{calibrated(p['conf'], p['lg']):.0%}",
+            (lambda rt: f"{rt[0]:.0%}" + ("*" if rt[1] else ""))(
+                calibrated(p["conf"], p["lg"], p["date"])),
             "", "",
         ])
     t = Table(rows, colWidths=[0.62 * inch, 2.5 * inch, 1.45 * inch, 0.5 * inch,
@@ -199,7 +206,8 @@ def main():
         for p_ in sorted(picks, key=lambda x: -x["conf"]):
             w.writerow([p_["date"], p_["lg"], p_["matchup"], p_["pick"],
                         f"{p_['conf']:.4f}",
-                        f"{calibrated(p_['conf'], p_['lg']):.4f}", "", "", ""])
+                        f"{calibrated(float(p_['conf']), p_['lg'], p_['date'])[0]:.4f}",
+                        "", "", ""])
     print(f"wrote {cpath}  (fill the 'won' column with Y/N, then run score_sheet.py)")
 
 

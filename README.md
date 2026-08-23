@@ -202,6 +202,37 @@ schtasks /Delete /TN "EdgeReport-PriceSheet" /F
 Coverage is reported per date so "not posted yet" can never be mistaken for
 "request failed" — the failure mode that has bitten this project three times.
 
+## Calibration
+
+`calibration.py` decides what number a pick is shown at. It is derived from the
+graded record, never hand-set, and it splits football by season phase.
+
+The sheet previously quoted one hit rate per tier measured across whole
+seasons. That overstated openers badly: college football's Headline tier hits
+**96.5% from week four onward**, but the model produced only **2** such picks in
+weeks 0-1, so a season opener was being shown at a November number.
+
+Measured early-season effect, from three seasons:
+
+| League | weeks 0-1 | weeks 4+ | edge surviving |
+|---|---:|---:|---:|
+| College football | 63.3% (n=60) | 71.2% (n=652) | **0.63** |
+| NFL | 68.5% (n=54) | 61.7% (n=193) | 1.00 |
+
+Cells with fewer than 30 graded picks are not trusted. Rather than inheriting
+from the all-season bucket (which would re-import the very optimism this
+removes), a thin early-season cell is shrunk toward its own league's main-phase
+rate scaled by that surviving-edge factor, weighted by sample size. Those rows
+are marked `*` on the sheet.
+
+Effect on the Aug 29 openers: USC 96.6% -> **80.4%**, TCU 81.4% -> **72.3%**.
+
+```bash
+python calibration.py     # print the whole table with sources
+```
+
+`SEASON_START` in that module needs updating each year.
+
 ## Red team audit
 
 `redteam.py` attacks this project's own conclusions. Run it after any change
