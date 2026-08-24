@@ -233,6 +233,28 @@ python calibration.py     # print the whole table with sources
 
 `SEASON_START` in that module needs updating each year.
 
+## Multi-book odds (optional)
+
+`price_sheet.py` uses ESPN by default, which exposes exactly one book
+(DraftKings). Red team T2 flagged that as a real limitation. `odds_api.py`
+adds the-odds-api.com, which returns many books including the two that matter
+for a Nevada bettor: `caesars` (the operator behind Nevada's former William
+Hill sportsbooks) and the legacy `williamhill_us` key.
+
+Setup — the key must come from you:
+
+1. Free key at https://the-odds-api.com (email only)
+2. `setx ODDS_API_KEY your_key_here`, or save it to `.odds_api_key`
+   next to the scripts (gitignored)
+3. `python odds_api.py` to verify and print the remaining quota
+
+With a key, `price_sheet.py` switches automatically and the `notes` column
+gains the best price across books, e.g. `caesars mkt 62% vig 4.6% | best -175
+@ fanduel`. Without one it falls back to ESPN and says so.
+
+Quota is `[markets] x [regions]` per call and one call covers a league's whole
+slate, so a daily four-league run costs 4 of the free monthly allowance.
+
 ## Red team audit
 
 `redteam.py` attacks this project's own conclusions. Run it after any change

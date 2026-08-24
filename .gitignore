@@ -14,3 +14,6 @@ out/archive_issues.json
 __pycache__/
 *.pyc
 .venv/
+
+# never commit an API key
+.odds_api_key

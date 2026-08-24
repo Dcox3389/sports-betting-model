@@ -130,7 +130,25 @@ def main():
         r["odds"] = ""
         r["notes"] = ""
 
-    odds = collect_odds(rows)
+    # Prefer the multi-book feed (gives Caesars, the Nevada operator). Fall
+    # back to ESPN's single DraftKings quote when no API key is configured.
+    import odds_api
+    multi, why = odds_api.fetch(sorted({r["league"] for r in rows}))
+    if multi:
+        print(f"  multi-book feed: {len(multi)} events"
+              f"   quota {odds_api.QUOTA.get('x-requests-remaining','?')} left")
+        odds = {}
+        for (lg, day, away, home), books in multi.items():
+            bk, prices = odds_api.pick_book(books)
+            if not prices:
+                continue
+            conv = {norm(t): v for t, v in prices.items()}
+            conv["_book"] = bk
+            conv["_all"] = books
+            odds[(lg, day, norm(away), norm(home))] = conv
+    else:
+        print(f"  {why}")
+        odds = collect_odds(rows)
 
     matched, edges = 0, []
     for r in rows:
@@ -148,11 +166,21 @@ def main():
         r["odds"] = f"{int(ml):+d}"
         raw_pick = am_prob(ml)
         other = [v for k, v in book.items()
-                 if k != "_book" and k != norm(r["pick"])]
+                 if k not in ("_book", "_all") and k != norm(r["pick"])]
         vig = raw_pick + am_prob(other[0]) if other else 1.0
         fair = raw_pick / vig if vig else raw_pick
         ours = float(r["chance"])
-        r["notes"] = f"mkt {fair:.0%} vig {vig-1:.1%}"
+        note = f"{book.get('_book','?')} mkt {fair:.0%} vig {vig-1:.1%}"
+        allb = book.get("_all")
+        if allb:
+            import odds_api as _oa
+            # find the pick's display name as the feed spells it
+            disp = next((t for t in next(iter(allb.values())) if norm(t) == norm(r["pick"])), None)
+            if disp:
+                bp, who = _oa.best_price(allb, disp)
+                if bp is not None and who and who != book.get("_book"):
+                    note += f" | best {int(bp):+d} @ {who}"
+        r["notes"] = note
         edges.append((ours - fair, ours, fair, ml, r))
 
     print(f"\nmatched prices to {matched} of {len(rows)} picks")
